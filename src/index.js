@@ -43,12 +43,19 @@ app.post('/login', (req, res) => {
   if (!password) {
     return res.status(400).json({ message: 'O campo "password" é obrigatório' });
   }
-  if (validatePassword(password) === false) {
+  if (!validatePassword(password)) {
     return res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
   }
   const token = newToken();
   // console.log(token);
   return res.status(HTTP_OK_STATUS).json({ token });
+});
+
+app.post('/talker', (req, res) => {
+  const newTalker = req.body;
+  console.log(newTalker);
+
+  return res.status(201).json(newTalker);
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
