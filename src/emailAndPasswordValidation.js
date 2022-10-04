@@ -3,7 +3,10 @@ const validateEmail = (email) => {
   return emailRegex.test(email);
 };
 
-const validatePassword = (password) => password >= 6;
+const validatePassword = (password) => {
+  const minLength = 6;
+  return password.length >= minLength;
+};
 
 // console.log(validateEmail('juca@trybe.com'));
 
