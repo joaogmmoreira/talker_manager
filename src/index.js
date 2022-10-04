@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-// const fs = require('fs').promises;
 const fetchData = require('./fetchData');
+const newToken = require('./token');
+const { validateEmail, validatePassword } = require('./emailAndPasswordValidation');
 
 const app = express();
 app.use(bodyParser.json());
@@ -27,6 +28,26 @@ app.get('/talker/:id', async (req, res) => {
     return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
   return res.status(HTTP_OK_STATUS).json(talker);  
+});
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  // console.log(email, password);
+  if (!email) {
+    return res.status(400).json({ message: 'O campo "email" é obrigatório' });
+  }
+  if (!validateEmail(email)) {
+    return res.status(400).json({ message: 'O "email" deve ter o formato \'email@email.com\'' });
+  }
+  if (!password) {
+    return res.status(400).json({ message: 'O campo "password" é obrigatório' });
+  }
+  if (!validatePassword(password)) {
+    return res.status(400).json({ message: 'O \'password\' deve ter pelo menos 6 caracteres' });
+  }
+  const token = newToken();
+  // console.log(token);
+  return res.status(HTTP_OK_STATUS).json({ token });
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
