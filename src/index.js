@@ -4,7 +4,9 @@ const fetchData = require('./fetchData');
 const newToken = require('./token');
 const { validateEmail, validatePassword } = require('./emailAndPasswordValidation');
 const { validateToken,
-  validateName } = require('./talkerValidation');
+  validateName,
+  validateAge,
+  validateTalk } = require('./talkerValidation');
 
 const app = express();
 app.use(bodyParser.json());
@@ -53,22 +55,8 @@ app.post('/login', (req, res) => {
   return res.status(HTTP_OK_STATUS).json({ token });
 });
 
-app.post('/talker', (req, res) => {
-  const token = req.headers.authorization;
+app.post('/talker', validateToken, validateName, validateAge, validateTalk, (req, res) => {
   const newTalker = req.body;
-
-  if (!token) {
-    res.status(401).json({ message: 'Token não encontrado' });
-  }
-  if (!validateToken(token)) {
-    res.status(401).json({ message: 'Token inválido' });
-  }
-  if (!newTalker.name) {
-    res.status(400).json({ message: 'O campo "name" é obrigatório' });
-  }
-  if (!validateName(newTalker.name)) {
-    res.status(400).json({ message: 'O "name" deve ter pelo menos 3 caracteres' });
-  }
 
   return res.status(201).json(newTalker);
 });
