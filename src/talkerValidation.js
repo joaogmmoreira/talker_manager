@@ -73,12 +73,16 @@ const validateRate = (req, res, next) => {
   const newTalkerRate = req.body.talk.rate;
   
   const rateIsInteger = Number.isInteger(newTalkerRate);
+
+  if ((newTalkerRate < 1) || (newTalkerRate > 5)) {
+    return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+  }
   
   if (!newTalkerRate) {
     return res.status(400).json({ message: 'O campo "rate" é obrigatório' });
   }
 
-  if (!rateIsInteger || (newTalkerRate <= 0) || (newTalkerRate > 5)) {
+  if (!rateIsInteger) {
     return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
 

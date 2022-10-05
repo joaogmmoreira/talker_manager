@@ -85,19 +85,23 @@ validateWatchedAt,
 validateRate, 
 async (req, res) => {
   const { id } = req.params;
-  const data = fetchData();
+  // console.log(id);
+  const data = await fetchData();
   const parseData = JSON.parse(data);
+  // console.log(parseData);
   const editTalker = req.body;
+  // console.log(editTalker);
   
   const index = parseData.findIndex((element) => element.id === Number(id));
+  // console.log(index);
 
   const editTalkerRegistry = { 
     ...editTalker, 
     id: parseData[index].id,
    };
-
+  
   await insertNewTalker(editTalkerRegistry);
-  return res.status(201).json(editTalkerRegistry);
+  return res.status(200).json(editTalkerRegistry);
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
