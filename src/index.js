@@ -6,7 +6,11 @@ const { validateEmail, validatePassword } = require('./emailAndPasswordValidatio
 const { validateToken,
   validateName,
   validateAge,
-  validateTalk } = require('./talkerValidation');
+  validateTalk,
+  validateWatchedAt,
+  validateRate,
+  getLastId,
+  insertNewTalker } = require('./talkerValidation');
 
 const app = express();
 app.use(bodyParser.json());
@@ -16,7 +20,6 @@ const PORT = '3000';
 
 app.get('/talker', async (_req, res) => {
   const data = await fetchData();
-  // console.log(JSON.parse(data));
   
   return res.status(HTTP_OK_STATUS).json(JSON.parse(data));
 });
@@ -24,7 +27,7 @@ app.get('/talker', async (_req, res) => {
 app.get('/talker/:id', async (req, res) => {
   const data = await fetchData();
   const parseData = JSON.parse(data);
-  // console.log(parseData);
+  
   const { id } = req.params;
   const talker = parseData.find((element) => element.id === Number(id));
 
@@ -36,8 +39,7 @@ app.get('/talker/:id', async (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  // console.log(email, password);
-  // console.log(validatePassword(password));
+ 
   if (!email) {
     return res.status(400).json({ message: 'O campo "email" é obrigatório' });
   }
@@ -51,14 +53,27 @@ app.post('/login', (req, res) => {
     return res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
   }
   const token = newToken();
-  // console.log(token);
+  
   return res.status(HTTP_OK_STATUS).json({ token });
 });
 
-app.post('/talker', validateToken, validateName, validateAge, validateTalk, (req, res) => {
+app.post('/talker', 
+validateToken, 
+validateName, 
+validateAge, 
+validateTalk, 
+validateWatchedAt,
+validateRate,
+async (req, res) => {
   const newTalker = req.body;
+  const id = await getLastId() + 1;
 
-  return res.status(201).json(newTalker);
+  const newTalkerRegistry = {
+    id,
+    ...newTalker,
+  };
+  await insertNewTalker(newTalkerRegistry);
+  res.status(201).json(newTalkerRegistry);
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
