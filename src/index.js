@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs').promises;
 const bodyParser = require('body-parser');
 const fetchData = require('./fetchData');
 const newToken = require('./token');
@@ -102,6 +103,22 @@ async (req, res) => {
   
   await insertNewTalker(editTalkerRegistry);
   return res.status(200).json(editTalkerRegistry);
+});
+
+app.delete('/talker/:id', validateToken, async (req, res) => {
+  const { id } = req.params;
+
+  const data = await fetchData();
+  const parseData = JSON.parse(data);
+  console.log(parseData);
+
+  // const person = parseData.find((element) => element.id === Number(id));
+
+  const index = parseData.findIndex((element) => element.id === Number(id));
+  parseData.splice(index, 1);
+
+  await fs.writeFile('./src/talker.json', JSON.stringify(parseData));
+  return res.status(204).json({ message: 'oi' });
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
