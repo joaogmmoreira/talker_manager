@@ -73,7 +73,31 @@ async (req, res) => {
     ...newTalker,
   };
   await insertNewTalker(newTalkerRegistry);
-  res.status(201).json(newTalkerRegistry);
+  return res.status(201).json(newTalkerRegistry);
+});
+
+app.put('/talker/:id', 
+validateToken, 
+validateName, 
+validateAge, 
+validateTalk, 
+validateWatchedAt, 
+validateRate, 
+async (req, res) => {
+  const { id } = req.params;
+  const data = fetchData();
+  const parseData = JSON.parse(data);
+  const editTalker = req.body;
+  
+  const index = parseData.findIndex((element) => element.id === Number(id));
+
+  const editTalkerRegistry = { 
+    ...editTalker, 
+    id: parseData[index].id,
+   };
+
+  await insertNewTalker(editTalkerRegistry);
+  return res.status(201).json(editTalkerRegistry);
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
