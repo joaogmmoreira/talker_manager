@@ -19,6 +19,26 @@ app.use(bodyParser.json());
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
 
+app.get('/talker/search', validateToken, async (req, res) => {
+  const newQuery = req.query;
+  // console.log(newQuery);
+
+  const data = await fetchData();
+  const parseData = JSON.parse(data);
+
+  if (!newQuery) {
+    return res.status(HTTP_OK_STATUS).json(parseData);
+  }
+
+  const foundTalkers = parseData.filter((element) => element.name.includes(newQuery.q));
+
+  if (foundTalkers.length === 0) {
+    return res.status(HTTP_OK_STATUS).json([]);
+  }
+
+  return res.status(200).json(foundTalkers);
+});
+
 app.get('/talker', async (_req, res) => {
   const data = await fetchData();
   
